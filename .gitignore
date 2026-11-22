@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.db
+.env
+.venv
+venv/
+android_apk_project/
+*.zip

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}Free Fire Esports Arena{% endblock %}</title>
+    <!-- PWA Manifest & App Config -->
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="theme-color" content="#ff5500">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FF Arena">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icon.png') }}">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ff-orange: #ff5500;
+            --ff-gold: #ffaa00;
+            --ff-dark: #0a0c10;
+            --ff-card: #12151e;
+            --ff-card-border: #1e2433;
+            --ff-text-muted: #8a94a6;
+        }
+        body {
+            background-color: var(--ff-dark);
+            color: #ffffff;
+            font-family: 'Rajdhani', sans-serif;
+            padding-bottom: 75px;
+            min-height: 100vh;
+        }
+        h1, h2, h3, h4, .brand-font {
+            font-family: 'Teko', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .navbar-brand {
+            font-size: 1.8rem;
+            color: var(--ff-gold) !important;
+            font-family: 'Teko', sans-serif;
+            letter-spacing: 1.5px;
+        }
+        .bg-ff-card {
+            background: var(--ff-card);
+            border: 1px solid var(--ff-card-border);
+            border-radius: 12px;
+        }
+        .btn-fire {
+            background: linear-gradient(135deg, #ff5500 0%, #ff8800 100%);
+            color: #fff;
+            border: none;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(255, 85, 0, 0.4);
+            transition: all 0.2s ease;
+        }
+        .btn-fire:hover {
+            background: linear-gradient(135deg, #ff6600 0%, #ff9900 100%);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 85, 0, 0.6);
+        }
+        .badge-mode {
+            background: rgba(255, 85, 0, 0.15);
+            color: var(--ff-gold);
+            border: 1px solid rgba(255, 170, 0, 0.3);
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+        .badge-map {
+            background: rgba(0, 150, 255, 0.15);
+            color: #4da6ff;
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+        /* Mobile bottom nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 12, 16, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #1e2433;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+        }
+        .nav-item-mobile {
+            color: var(--ff-text-muted);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        .nav-item-mobile i {
+            font-size: 1.25rem;
+            margin-bottom: 2px;
+        }
+        .nav-item-mobile.active, .nav-item-mobile:hover {
+            color: var(--ff-gold);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-dark bg-dark border-bottom border-secondary px-3 py-2">
+        <div class="container-fluid max-w-lg">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+                <i class="fa-solid fa-fire text-danger me-2"></i> FF TOURNAMENTS
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <button id="pwaInstallBtn" class="btn btn-sm btn-warning text-dark fw-bold rounded-pill px-2 d-none">
+                    <i class="fa-solid fa-download"></i> Install App
+                </button>
+                {% if current_user %}
+                    <a href="{{ url_for('wallet') }}" class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1 rounded-pill px-3">
+                        <i class="fa-solid fa-coins"></i> <strong>₹{{ current_user.balance }}</strong>
+                    </a>
+                    {% if current_user.is_admin %}
+                        <a href="{{ url_for('admin') }}" class="btn btn-sm btn-danger rounded-pill px-3">
+                            <i class="fa-solid fa-crown"></i> Admin
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-sm btn-outline-light rounded-pill px-3">Login</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-sm btn-fire rounded-pill px-3">Join</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-3" style="max-width: 600px;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="container py-2" style="max-width: 650px;">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="bottom-nav">
+        <a href="{{ url_for('index') }}" class="nav-item-mobile {% if request.endpoint == 'index' %}active{% endif %}">
+            <i class="fa-solid fa-gamepad"></i>
+            <span>Matches</span>
+        </a>
+        <a href="{{ url_for('my_matches') }}" class="nav-item-mobile {% if request.endpoint == 'my_matches' %}active{% endif %}">
+            <i class="fa-solid fa-ticket"></i>
+            <span>My Matches</span>
+        </a>
+        <a href="{{ url_for('wallet') }}" class="nav-item-mobile {% if request.endpoint == 'wallet' %}active{% endif %}">
+            <i class="fa-solid fa-wallet"></i>
+            <span>Wallet</span>
+        </a>
+        <a href="{{ url_for('leaderboard') }}" class="nav-item-mobile {% if request.endpoint == 'leaderboard' %}active{% endif %}">
+            <i class="fa-solid fa-trophy"></i>
+            <span>Top Rank</span>
+        </a>
+        {% if current_user %}
+            <a href="{{ url_for('logout') }}" class="nav-item-mobile text-danger">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+        {% else %}
+            <a href="{{ url_for('login') }}" class="nav-item-mobile">
+                <i class="fa-solid fa-user"></i>
+                <span>Login</span>
+            </a>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const btn = document.getElementById('pwaInstallBtn');
+            if (btn) {
+                btn.classList.remove('d-none');
+                btn.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        deferredPrompt = null;
+                        btn.classList.add('d-none');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

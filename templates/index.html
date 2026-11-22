@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Mode Filter Pills -->
+<div class="d-flex justify-content-between gap-1 my-3 overflow-x-auto pb-1">
+    <a href="{{ url_for('index', mode='ALL') }}" class="btn btn-sm {% if selected_mode == 'ALL' %}btn-fire{% else %}btn-outline-secondary text-light{% endif %} rounded-pill px-3 flex-fill">ALL</a>
+    <a href="{{ url_for('index', mode='SOLO') }}" class="btn btn-sm {% if selected_mode == 'SOLO' %}btn-fire{% else %}btn-outline-secondary text-light{% endif %} rounded-pill px-3 flex-fill">SOLO</a>
+    <a href="{{ url_for('index', mode='DUO') }}" class="btn btn-sm {% if selected_mode == 'DUO' %}btn-fire{% else %}btn-outline-secondary text-light{% endif %} rounded-pill px-3 flex-fill">DUO</a>
+    <a href="{{ url_for('index', mode='SQUAD') }}" class="btn btn-sm {% if selected_mode == 'SQUAD' %}btn-fire{% else %}btn-outline-secondary text-light{% endif %} rounded-pill px-3 flex-fill">SQUAD</a>
+</div>
+
+<!-- Matches Feed -->
+<div class="d-flex flex-column gap-3">
+    {% for match in matches %}
+    <div class="bg-ff-card p-3 shadow position-relative">
+        <!-- Top badges -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge-mode"><i class="fa-solid fa-users me-1"></i> {{ match.mode }}</span>
+            <span class="badge-map"><i class="fa-solid fa-map-location-dot me-1"></i> {{ match.map_name }}</span>
+            <span class="text-warning small font-monospace"><i class="fa-regular fa-clock me-1"></i> {{ match.match_time }}</span>
+        </div>
+
+        <!-- Title -->
+        <h4 class="mb-2 text-white">{{ match.title }}</h4>
+
+        <!-- Prize Pool Grid -->
+        <div class="row g-2 text-center py-2 my-2 bg-dark rounded border border-secondary border-opacity-25">
+            <div class="col-4 border-end border-secondary border-opacity-25">
+                <small class="text-muted d-block">WIN PRIZE</small>
+                <strong class="text-success fs-5">₹{{ match.win_prize }}</strong>
+            </div>
+            <div class="col-4 border-end border-secondary border-opacity-25">
+                <small class="text-muted d-block">PER KILL</small>
+                <strong class="text-warning fs-5">₹{{ match.per_kill }}</strong>
+            </div>
+            <div class="col-4">
+                <small class="text-muted d-block">ENTRY FEE</small>
+                <strong class="text-danger fs-5">₹{{ match.entry_fee }}</strong>
+            </div>
+        </div>
+
+        <!-- Slots Progress -->
+        <div class="mt-2 mb-3">
+            <div class="d-flex justify-content-between small text-muted mb-1">
+                <span>Slots Filled</span>
+                <span class="text-light"><strong>{{ match.joined_count }}</strong> / {{ match.total_slots }}</span>
+            </div>
+            <div class="progress" style="height: 6px; background-color: #1e2433;">
+                {% set percent = (match.joined_count / match.total_slots * 100)|round %}
+                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ percent }}%;"></div>
+            </div>
+        </div>
+
+        <!-- Join / View Button -->
+        <div class="d-grid">
+            {% if match.is_full %}
+                <button class="btn btn-secondary text-uppercase fw-bold" disabled>Match Full</button>
+            {% else %}
+                <a href="{{ url_for('match_detail', match_id=match.id) }}" class="btn btn-fire">
+                    <i class="fa-solid fa-crosshairs me-1"></i> Join Match (₹{{ match.entry_fee }})
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5 text-muted">
+        <i class="fa-solid fa-ghost fa-3x mb-3"></i>
+        <h5>Abhi koi match available nahi hai!</h5>
+        <p>Admin jald hi naye matches schedule karenge.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

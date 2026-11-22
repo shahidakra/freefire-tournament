@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-3">
+    <div class="col-12 col-md-8">
+        <div class="bg-ff-card p-4 shadow">
+            <h3 class="text-white text-center mb-1"><i class="fa-solid fa-gamepad text-warning me-2"></i> Player Login</h3>
+            <p class="text-muted text-center small mb-4">Apne tournament account me sign in karein</p>
+
+            <form action="{{ url_for('login') }}" method="POST">
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Username</label>
+                    <input type="text" name="username" class="form-control bg-dark text-light border-secondary" required placeholder="Enter username">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label text-muted small">Password</label>
+                    <input type="password" name="password" class="form-control bg-dark text-light border-secondary" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="btn btn-fire w-100 py-2 fs-5">Login</button>
+            </form>
+
+            <div class="text-center mt-3 small text-muted">
+                Naye player hain? <a href="{{ url_for('register') }}" class="text-warning text-decoration-none fw-bold">Register Karein</a>
+            </div>
+            
+            <div class="mt-4 p-2 bg-dark rounded border border-secondary border-opacity-25 text-center small text-muted">
+                Admin Login Demo: <code>admin</code> / <code>admin123</code>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

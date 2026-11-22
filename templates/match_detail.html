@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{{ url_for('index') }}" class="text-muted text-decoration-none small">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back to Matches
+    </a>
+</div>
+
+<div class="bg-ff-card p-3 shadow mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="badge-mode">{{ match.mode }}</span>
+        <span class="badge-map">{{ match.map_name }}</span>
+        <span class="text-warning small"><i class="fa-regular fa-clock me-1"></i> {{ match.match_time }}</span>
+    </div>
+    
+    <h3 class="text-white">{{ match.title }}</h3>
+
+    <!-- Prize Breakdown -->
+    <div class="row g-2 text-center py-2 my-2 bg-dark rounded border border-secondary border-opacity-25">
+        <div class="col-4 border-end border-secondary border-opacity-25">
+            <small class="text-muted d-block">WIN PRIZE</small>
+            <strong class="text-success fs-4">₹{{ match.win_prize }}</strong>
+        </div>
+        <div class="col-4 border-end border-secondary border-opacity-25">
+            <small class="text-muted d-block">PER KILL</small>
+            <strong class="text-warning fs-4">₹{{ match.per_kill }}</strong>
+        </div>
+        <div class="col-4">
+            <small class="text-muted d-block">ENTRY FEE</small>
+            <strong class="text-danger fs-4">₹{{ match.entry_fee }}</strong>
+        </div>
+    </div>
+
+    <!-- Join Status Action -->
+    <div class="my-3">
+        {% if already_joined %}
+            <div class="alert alert-success d-flex align-items-center gap-2 mb-0">
+                <i class="fa-solid fa-circle-check fs-4"></i>
+                <div>
+                    <strong>Aap is match me registered hain!</strong><br>
+                    <small>Aapka Slot Number: <strong>#{{ user_slot }}</strong>. Room ID & Password match se 15 min pehle "My Matches" me milenge.</small>
+                </div>
+            </div>
+        {% elif match.joined_count >= match.total_slots %}
+            <button class="btn btn-secondary w-100 py-2 fw-bold text-uppercase" disabled>Match Full</button>
+        {% elif current_user %}
+            <form action="{{ url_for('join_match', match_id=match.id) }}" method="POST">
+                <button type="submit" class="btn btn-fire w-100 py-2 fs-5">
+                    <i class="fa-solid fa-bolt me-1"></i> Pay ₹{{ match.entry_fee }} & Confirm Slot
+                </button>
+            </form>
+            <div class="text-center mt-2 small text-muted">
+                Wallet Balance: <strong class="text-warning">₹{{ current_user.balance }}</strong> 
+                {% if current_user.balance < match.entry_fee %}
+                    (<a href="{{ url_for('wallet') }}" class="text-danger text-decoration-none">Add Money</a>)
+                {% endif %}
+            </div>
+        {% else %}
+            <a href="{{ url_for('login') }}" class="btn btn-fire w-100 py-2 fs-5">Login to Join Match</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Registered Slots / Players -->
+<div class="bg-ff-card p-3 shadow">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0 text-white"><i class="fa-solid fa-users me-2 text-warning"></i> Registered Players ({{ joined_count }}/{{ match.total_slots }})</h5>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-dark table-striped table-hover small mb-0">
+            <thead>
+                <tr class="text-muted">
+                    <th style="width: 20%;">Slot #</th>
+                    <th>Free Fire IGN</th>
+                    <th>FF UID</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in participants %}
+                <tr>
+                    <td class="text-warning fw-bold">#{{ p.slot_number }}</td>
+                    <td><strong class="text-light">{{ p.ff_name }}</strong></td>
+                    <td class="text-muted font-monospace">{{ p.ff_uid }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3" class="text-center text-muted py-3">Abhi tak kisi player ne join nahi kiya hai. Pehla slot aapka ho sakta hai!</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3 class="mb-3 text-white"><i class="fa-solid fa-ticket text-warning me-2"></i> My Joined Matches</h3>
+
+<div class="d-flex flex-column gap-3">
+    {% for match in matches %}
+    <div class="bg-ff-card p-3 shadow border border-warning border-opacity-50">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge-mode">{{ match.mode }}</span>
+            <span class="badge bg-warning text-dark fw-bold">Slot #{{ match.slot_number }}</span>
+            <span class="text-warning small"><i class="fa-regular fa-clock me-1"></i> {{ match.match_time }}</span>
+        </div>
+
+        <h4 class="text-white mb-2">{{ match.title }}</h4>
+        <div class="small text-muted mb-3">Map: <strong class="text-light">{{ match.map_name }}</strong> | Win Prize: <strong class="text-success">₹{{ match.win_prize }}</strong></div>
+
+        <!-- Room Credentials Card -->
+        <div class="p-3 rounded bg-dark border border-secondary border-opacity-50">
+            {% if match.room_id and match.room_pass %}
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="fa-solid fa-door-open text-success fs-5"></i>
+                    <strong class="text-success">Custom Room Details Released!</strong>
+                </div>
+                <div class="row g-2 text-center">
+                    <div class="col-6">
+                        <small class="text-muted d-block">ROOM ID</small>
+                        <div class="p-2 rounded bg-black border border-secondary border-opacity-25 font-monospace fs-5 text-warning fw-bold">
+                            {{ match.room_id }}
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted d-block">PASSWORD</small>
+                        <div class="p-2 rounded bg-black border border-secondary border-opacity-25 font-monospace fs-5 text-warning fw-bold">
+                            {{ match.room_pass }}
+                        </div>
+                    </div>
+                </div>
+                <small class="text-muted d-block mt-2 text-center">Free Fire open karein -> Custom Room me jayein -> Room ID & Pass enter karke apne Slot <strong>#{{ match.slot_number }}</strong> par bethein!</small>
+            {% else %}
+                <div class="d-flex align-items-center gap-2 text-muted">
+                    <i class="fa-solid fa-lock fs-5 text-warning"></i>
+                    <div>
+                        <strong class="text-warning">Room ID & Password Locked</strong><br>
+                        <small>Match start hone se 15 minute pehle Admin yahan Room ID aur Password release karenge.</small>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5 text-muted">
+        <i class="fa-solid fa-gamepad fa-3x mb-3 text-secondary"></i>
+        <h5>Aapne abhi tak koi match join nahi kiya!</h5>
+        <a href="{{ url_for('index') }}" class="btn btn-fire mt-2 px-4">Browse Upcoming Matches</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

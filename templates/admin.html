@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="text-white mb-0"><i class="fa-solid fa-crown text-danger me-2"></i> Host / Admin Panel</h3>
+    <span class="badge bg-danger">Admin Mode</span>
+</div>
+
+<!-- Stats Header -->
+<div class="row g-2 mb-4 text-center">
+    <div class="col-6">
+        <div class="bg-ff-card p-3 shadow">
+            <small class="text-muted d-block">TOTAL PLAYERS</small>
+            <strong class="fs-4 text-warning">{{ total_users }}</strong>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="bg-ff-card p-3 shadow">
+            <small class="text-muted d-block">TOTAL MATCHES</small>
+            <strong class="fs-4 text-success">{{ matches|length }}</strong>
+        </div>
+    </div>
+</div>
+
+<!-- Create Match Card -->
+<div class="bg-ff-card p-3 shadow mb-4">
+    <h5 class="text-white mb-3"><i class="fa-solid fa-circle-plus text-warning me-2"></i> Create New Tournament Match</h5>
+    <form action="{{ url_for('admin_create_match') }}" method="POST">
+        <div class="mb-3">
+            <label class="form-label text-muted small">Match Title</label>
+            <input type="text" name="title" class="form-control bg-dark text-light border-secondary" required placeholder="e.g. Bermuda Sunday Cup #4">
+        </div>
+        <div class="row g-2 mb-3">
+            <div class="col-6">
+                <label class="form-label text-muted small">Map</label>
+                <select name="map_name" class="form-select bg-dark text-light border-secondary">
+                    <option value="Bermuda">Bermuda</option>
+                    <option value="Purgatory">Purgatory</option>
+                    <option value="Kalahari">Kalahari</option>
+                    <option value="Alpine">Alpine</option>
+                    <option value="NexTerra">NexTerra</option>
+                </select>
+            </div>
+            <div class="col-6">
+                <label class="form-label text-muted small">Mode</label>
+                <select name="mode" class="form-select bg-dark text-light border-secondary">
+                    <option value="SOLO">SOLO (48 Slots)</option>
+                    <option value="DUO">DUO (24 Teams)</option>
+                    <option value="SQUAD">SQUAD (12 Teams)</option>
+                    <option value="CS">Clash Squad (8 Slots)</option>
+                </select>
+            </div>
+        </div>
+        <div class="row g-2 mb-3">
+            <div class="col-4">
+                <label class="form-label text-muted small">Entry Fee (₹)</label>
+                <input type="number" name="entry_fee" class="form-control bg-dark text-light border-secondary" value="20" required>
+            </div>
+            <div class="col-4">
+                <label class="form-label text-muted small">Per Kill (₹)</label>
+                <input type="number" name="per_kill" class="form-control bg-dark text-light border-secondary" value="10" required>
+            </div>
+            <div class="col-4">
+                <label class="form-label text-muted small">Win Prize (₹)</label>
+                <input type="number" name="win_prize" class="form-control bg-dark text-light border-secondary" value="300" required>
+            </div>
+        </div>
+        <div class="row g-2 mb-3">
+            <div class="col-6">
+                <label class="form-label text-muted small">Match Timing</label>
+                <input type="text" name="match_time" class="form-control bg-dark text-light border-secondary" placeholder="e.g. Today 09:00 PM" required>
+            </div>
+            <div class="col-6">
+                <label class="form-label text-muted small">Total Slots</label>
+                <input type="number" name="total_slots" class="form-control bg-dark text-light border-secondary" value="48" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-fire w-100 py-2 fw-bold">Publish Tournament</button>
+    </form>
+</div>
+
+<!-- Manage Matches & Room Credentials -->
+<h5 class="text-white mb-3"><i class="fa-solid fa-list-check text-primary me-2"></i> Manage Active Matches & Room ID</h5>
+<div class="d-flex flex-column gap-3 mb-4">
+    {% for match in matches %}
+    <div class="bg-ff-card p-3 shadow">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0 text-white">#{{ match.id }} {{ match.title }}</h5>
+            <span class="badge bg-secondary">{{ match.joined_count }}/{{ match.total_slots }} Joined</span>
+        </div>
+        <div class="small text-muted mb-3">{{ match.mode }} • {{ match.map_name }} • {{ match.match_time }}</div>
+
+        <!-- Release Room ID form -->
+        <form action="{{ url_for('admin_set_room', match_id=match.id) }}" method="POST" class="p-2 bg-dark rounded border border-secondary border-opacity-25 mb-3">
+            <label class="form-label small text-warning fw-bold mb-1">Release Room ID & Password to Players:</label>
+            <div class="row g-2">
+                <div class="col-5">
+                    <input type="text" name="room_id" class="form-control form-control-sm bg-black text-light border-secondary" placeholder="Room ID" value="{{ match.room_id }}" required>
+                </div>
+                <div class="col-4">
+                    <input type="text" name="room_pass" class="form-control form-control-sm bg-black text-light border-secondary" placeholder="Password" value="{{ match.room_pass }}" required>
+                </div>
+                <div class="col-3">
+                    <button type="submit" class="btn btn-sm btn-success w-100 fw-bold">Update</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Registered Players accordion -->
+        <details class="text-muted small">
+            <summary class="cursor-pointer text-light fw-bold py-1">View Registered Players ({{ match.joined_count }})</summary>
+            <ul class="list-group list-group-flush bg-transparent mt-2">
+                {% for p in match.participants %}
+                    <li class="list-group-item bg-dark text-light border-secondary border-opacity-25 d-flex justify-content-between py-1 small">
+                        <span>Slot #{{ p.slot_number }} - <strong>{{ p.ff_name }}</strong></span>
+                        <span class="font-monospace text-muted">{{ p.ff_uid }}</span>
+                    </li>
+                {% else %}
+                    <li class="list-group-item bg-dark text-muted border-0 py-1 small">No players registered yet.</li>
+                {% endfor %}
+            </ul>
+        </details>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

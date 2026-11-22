@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3 class="mb-3 text-white"><i class="fa-solid fa-trophy text-warning me-2"></i> Hall of Fame / Leaderboard</h3>
+
+<div class="bg-ff-card p-3 shadow">
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle small mb-0">
+            <thead>
+                <tr class="text-muted">
+                    <th style="width: 15%;">Rank</th>
+                    <th>Player</th>
+                    <th>FF UID</th>
+                    <th class="text-center">Matches</th>
+                    <th class="text-end">Kills</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in players %}
+                <tr>
+                    <td>
+                        {% if loop.index == 1 %}
+                            <span class="badge bg-warning text-dark fs-6"><i class="fa-solid fa-crown"></i> #1</span>
+                        {% elif loop.index == 2 %}
+                            <span class="badge bg-secondary text-light fs-6">#2</span>
+                        {% elif loop.index == 3 %}
+                            <span class="badge bg-danger text-light fs-6">#3</span>
+                        {% else %}
+                            <span class="text-muted font-monospace ps-2">#{{ loop.index }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <strong class="text-light">{{ player.ff_name }}</strong>
+                    </td>
+                    <td class="text-muted font-monospace">{{ player.ff_uid }}</td>
+                    <td class="text-center">{{ player.matches_played }}</td>
+                    <td class="text-end text-danger fw-bold fs-6">{{ player.total_kills }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-3">Abhi tak koi player data available nahi hai.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3 class="mb-3 text-white"><i class="fa-solid fa-wallet text-warning me-2"></i> Player Wallet</h3>
+
+<!-- Balance Card -->
+<div class="bg-ff-card p-4 shadow mb-4 text-center border-warning border-opacity-25" style="background: linear-gradient(145deg, #161a26, #10121a);">
+    <small class="text-muted text-uppercase tracking-wider">Available Balance</small>
+    <h1 class="display-4 text-warning fw-bold my-2">₹{{ user.balance }}</h1>
+    <div class="d-flex justify-content-center gap-2 small text-muted">
+        <span>FF Name: <strong class="text-light">{{ user.ff_name }}</strong></span> • 
+        <span>FF UID: <strong class="text-light">{{ user.ff_uid }}</strong></span>
+    </div>
+</div>
+
+<!-- Add Cash / Topup -->
+<div class="bg-ff-card p-3 shadow mb-4">
+    <h5 class="text-white mb-3"><i class="fa-solid fa-circle-plus text-success me-2"></i> Add Money (Demo / UPI)</h5>
+    <p class="small text-muted mb-3">Testing ke liye aap direct button click karke balance add kar sakte hain:</p>
+
+    <div class="row g-2 mb-3">
+        <div class="col-4">
+            <form action="{{ url_for('wallet_add') }}" method="POST">
+                <input type="hidden" name="amount" value="50">
+                <button type="submit" class="btn btn-outline-warning w-100 py-2 fw-bold">+ ₹50</button>
+            </form>
+        </div>
+        <div class="col-4">
+            <form action="{{ url_for('wallet_add') }}" method="POST">
+                <input type="hidden" name="amount" value="100">
+                <button type="submit" class="btn btn-outline-warning w-100 py-2 fw-bold">+ ₹100</button>
+            </form>
+        </div>
+        <div class="col-4">
+            <form action="{{ url_for('wallet_add') }}" method="POST">
+                <input type="hidden" name="amount" value="200">
+                <button type="submit" class="btn btn-outline-warning w-100 py-2 fw-bold">+ ₹200</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="bg-ff-card p-3 shadow">
+    <h5 class="text-white mb-3"><i class="fa-solid fa-chart-simple text-primary me-2"></i> Tournament Career Stats</h5>
+    <div class="row g-2 text-center">
+        <div class="col-6">
+            <div class="p-3 bg-dark rounded border border-secondary border-opacity-25">
+                <small class="text-muted d-block">MATCHES PLAYED</small>
+                <strong class="fs-4 text-light">{{ user.matches_played }}</strong>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="p-3 bg-dark rounded border border-secondary border-opacity-25">
+                <small class="text-muted d-block">TOTAL KILLS</small>
+                <strong class="fs-4 text-danger">{{ user.total_kills }}</strong>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

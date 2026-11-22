@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-3">
+    <div class="col-12 col-md-8">
+        <div class="bg-ff-card p-4 shadow">
+            <h3 class="text-white text-center mb-1"><i class="fa-solid fa-user-plus text-warning me-2"></i> Player Registration</h3>
+            <p class="text-muted text-center small mb-4">Register karte hi <strong>₹100 Signup Bonus</strong> payein!</p>
+
+            <form action="{{ url_for('register') }}" method="POST">
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Username</label>
+                    <input type="text" name="username" class="form-control bg-dark text-light border-secondary" required placeholder="Choose a username">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Password</label>
+                    <input type="password" name="password" class="form-control bg-dark text-light border-secondary" required placeholder="Create a password">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Free Fire In-Game Name (IGN)</label>
+                    <input type="text" name="ff_name" class="form-control bg-dark text-light border-secondary" required placeholder="Exact in-game name (e.g. Raistar_FF)">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label text-muted small">Free Fire UID (Numeric)</label>
+                    <input type="text" name="ff_uid" class="form-control bg-dark text-light border-secondary" required placeholder="e.g. 1928374650">
+                </div>
+                <button type="submit" class="btn btn-fire w-100 py-2 fs-5">Create Account</button>
+            </form>
+
+            <div class="text-center mt-3 small text-muted">
+                Pehle se account hai? <a href="{{ url_for('login') }}" class="text-warning text-decoration-none fw-bold">Login Karein</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
